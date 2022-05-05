@@ -1,5 +1,7 @@
 import "reflect-metadata"; 
 import express, {Request, Response} from 'express';
+import BodyParser from 'body-parser';
+import cors from 'cors';
 import { createConnection } from 'typeorm';
 import { normal_users } from './Entities/normal_users';
 import { counter_users } from './Entities/counter_users';
@@ -7,7 +9,12 @@ import { issues } from './Entities/issues';
 import { counters } from './Entities/counters';
 import { notifications } from './Entities/notifications';
 
+
+
 const app = express();
+app.use(cors());
+app.use(BodyParser.json());
+app.use(BodyParser.urlencoded({extended: true}))
 
 createConnection({
     type: 'mysql',
@@ -19,11 +26,6 @@ createConnection({
     entities: [normal_users, counter_users, issues, counters, notifications]
 })
 
-
-app.get('/', (req: Request, res: Response): void => {
-    res.json({message: " running"});
-})
-
-app.listen('5000', (): void => {
+app.listen('5000', () => {
     console.log('server running');
 })

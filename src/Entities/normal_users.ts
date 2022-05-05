@@ -8,7 +8,7 @@ export class normal_users extends BaseEntity{
     @Column()
     name!: string;
 
-    @Column()
+    @Column({ unique: true})
     user_name!: string;
 
     @Column()
