@@ -2,8 +2,6 @@ import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, OneToOne, JoinColum
 import {normal_users} from "./normal_users";
 import {counters} from "./counters";
 
-
-
 export type UserRoleType = "waiting" | "inprogress" | "close"
 
 @Entity()
