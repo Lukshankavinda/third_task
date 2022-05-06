@@ -11,6 +11,7 @@ import { notifications } from './Entities/notifications';
 import normalUserRoutes from './routes/normalUserRoutes';
 import counterUserRoutes from './routes/counterUserRoutes';
 import issuesRoutes from './routes/issuesRoutes';
+import counterRoutes from './routes/counterRoutes';
 
 
 const app = express();
@@ -31,6 +32,7 @@ createConnection({
 app.use('/', normalUserRoutes);
 app.use('/', counterUserRoutes);
 app.use('/', issuesRoutes);
+app.use('/', counterRoutes);
 
 app.listen('5000', () => {
     console.log('server running');
