@@ -1,9 +1,13 @@
 import {Request, Response} from 'express';
-import {BaseEntity, getRepository } from 'typeorm';
+import { getRepository } from 'typeorm';
 import {validate} from "class-validator";
 import { counter_users } from '../Entities/counter_users';
+import { counters } from '../Entities/counters'
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
-class counterUserController extends BaseEntity{
+
+class counterUserController{
 
     static addCounterUser = async (req:Request, res:Response) => {
         const {name, user_name, password} = req.body;
@@ -12,7 +16,7 @@ class counterUserController extends BaseEntity{
         c_user.name = name;
         c_user.user_name = user_name;
 
-        c_user.password = c_user.setPassword(password);
+        c_user.password = bcrypt.hashSync(password, 10);
 
         const errors = await validate(counter_users);
         if (errors.length > 0) {
@@ -40,15 +44,38 @@ class counterUserController extends BaseEntity{
 
         const userRepository = getRepository( counter_users);
         let user: counter_users|any;
+        const countRepository = getRepository(counters);
+        let count: counters|any;
+        //let countup: counters|any;
         try {
             user = await userRepository.findOne({ where: {
                 user_name:user_name
             } });
-            if (user && !user.isValidPassword(password)) {
+            count = await countRepository.findOne({ where: {
+                counter_users_:user.id
+            } });
+
+            await countRepository.update({id:count.id},{ status: ['active']}); // change status of counters to active
+
+            if (user && !bcrypt.compareSync(password, user.password)) {
                 res.status(401).send('Incorrect Password');
                 return ;
             }
-            res.status(200).json({ access_token: user.generateJWT()});
+
+            const generateJWT = () => {
+                return jwt.sign(
+                    {
+                        user_name: user.user_name,
+                        name: user.name,
+                        counter_number: count.counter_number,
+                        counter_id: count.id
+                    },
+                    "SECRET",
+                    {expiresIn: "24h"}
+                );
+            };
+
+            res.status(200).json({ access_token: generateJWT()});
         } catch (error) {
             res.status(401).send(error);
         }

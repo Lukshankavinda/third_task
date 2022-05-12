@@ -2,6 +2,8 @@ import {Request, Response} from 'express';
 import {BaseEntity, getRepository } from 'typeorm';
 import {validate} from "class-validator";
 import { normal_users } from '../Entities/normal_users';
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 class normalUserController extends BaseEntity{
 
@@ -13,7 +15,7 @@ class normalUserController extends BaseEntity{
         n_user.email = email;
         n_user.tpno = tpno;
 
-        n_user.password = n_user.setPassword(password);
+        n_user.password = bcrypt.hashSync(password, 10);
 
         const errors = await validate(normal_users);
         if (errors.length > 0) {
@@ -45,14 +47,37 @@ class normalUserController extends BaseEntity{
             user = await userRepository.findOne({ where: {
                 email: email
             } });
-            if (user && !user.isValidPassword(password)) {
+            if (user && ! bcrypt.compareSync(password,user.password)) {
                 res.status(401).send('Incorrect Password');
                 return ;
             }
-            res.status(200).json({ access_token: user.generateJWT()});
+            const generateJWT = () => {
+                return jwt.sign(
+                    {
+                        email: user.email,
+                        name: user.name,
+                        tpno: user.tpno,
+                    },
+                    "SECRET",
+                    {expiresIn: "1h"}
+                );
+            };
+           
+            res.status(200).json({ access_token: generateJWT()});
         } catch (error) {
             res.status(401).send(error);
         }
+
+        const generateJWT = () => {
+            jwt.sign(
+                {
+                    email: req.body.email,
+                    name: req.body.name,
+                },
+                "SECRET",
+                {expiresIn: "1h"}
+            );
+        };
 
     };
     

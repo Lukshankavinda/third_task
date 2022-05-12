@@ -1,20 +1,19 @@
 import {Request, Response} from 'express';
-import {BaseEntity, getRepository } from 'typeorm';
-import {validate} from "class-validator";
+import { getRepository } from 'typeorm';
 import { issues } from '../Entities/issues';
 
-class issuesController extends BaseEntity{
+class issuesController{
 
     static addIssue = async (req:Request, res:Response) => {
         const newPost ={
-            name: req.body.name,
-            tpno: req.body.tpno,
-            email: req.body.email,
+        
+            name: res.locals.jwt.name,
+            tpno: res.locals.jwt.tpno,
+            email: res.locals.jwt.email,
             issue: req.body.issue,
-            status: req.body.status,
             issue_no: req.body.issue_no,
-            normalUsers_id: req.body.normalUsers_id,
-            counters_id: req.body.counters_id,
+            normal_users_: req.body.normalUsers_id,
+            counters_: req.body.counters_id,
 
         };
         const post = getRepository(issues).create(newPost);
