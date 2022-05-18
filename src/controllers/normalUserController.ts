@@ -1,11 +1,11 @@
 import {Request, Response} from 'express';
-import {BaseEntity, getRepository } from 'typeorm';
+import {getRepository } from 'typeorm';
 import {validate} from "class-validator";
 import { normal_users } from '../Entities/normal_users';
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-class normalUserController extends BaseEntity{
+class normalUserController {
 
     static addNormalUser = async (req:Request, res:Response) => {
         const {name, email, password, tpno} = req.body;
@@ -67,18 +67,6 @@ class normalUserController extends BaseEntity{
         } catch (error) {
             res.status(401).send(error);
         }
-
-        const generateJWT = () => {
-            jwt.sign(
-                {
-                    email: req.body.email,
-                    name: req.body.name,
-                },
-                "SECRET",
-                {expiresIn: "1h"}
-            );
-        };
-
     };
     
 }

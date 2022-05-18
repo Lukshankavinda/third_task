@@ -25,7 +25,7 @@ createConnection({
     username: "root",
     password: "123456",
     logging: true,
-    synchronize: true,
+    synchronize: false,
     entities: [normal_users, counter_users, issues, counters, notifications]
 })
 

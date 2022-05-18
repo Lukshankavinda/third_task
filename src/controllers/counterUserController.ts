@@ -44,16 +44,19 @@ class counterUserController{
 
         const userRepository = getRepository( counter_users);
         let user: counter_users|any;
+
         const countRepository = getRepository(counters);
         let count: counters|any;
+        
         //let countup: counters|any;
         try {
+
             user = await userRepository.findOne({ where: {
                 user_name:user_name
             } });
-            count = await countRepository.findOne({ where: {
-                counter_users_:user.id
-            } });
+
+            count = await countRepository.findOne({ where:{counter_users_:user.id}
+             });
 
             await countRepository.update({id:count.id},{ status: ['active']}); // change status of counters to active
 

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import issuesController from '../controllers/issuesController';
-import auth from '../middleware/auth'
+import auth from '../middleware/auth';
 const router = Router();
 
 router.post('/user/addi',auth, issuesController.addIssue); // http://localhost:5000/user/addi

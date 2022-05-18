@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, OneToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, JoinColumn , ManyToOne} from 'typeorm';
 import {normal_users} from "./normal_users";
 import {counters} from "./counters";
 
@@ -31,11 +31,11 @@ export class issues extends BaseEntity{
     @Column()
     issue_no!: number;
 
-    @OneToOne(() => normal_users)
+    @ManyToOne(() => normal_users)
     @JoinColumn()
     normal_users_!: normal_users;
 
-    @OneToOne(() => counters)
+    @ManyToOne(() => counters)
     @JoinColumn()
     counters_!: counters;
 }
